@@ -1,9 +1,8 @@
 CREATE TABLE IF NOT EXISTS vagas (
-
-    id INT PRIMARY KEY AUTOINCREMENT,
-    titulo TEXT,
-    empresa TEXT,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo      TEXT NOT NULL,
+    empresa     TEXT,
     localizacao TEXT,
-    salario REAL,
-    nivel TEXT,
+    salario     REAL,
+    nivel       TEXT
 );

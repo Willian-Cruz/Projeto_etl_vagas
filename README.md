@@ -1,82 +1,67 @@
-# 🚀 Pipeline de Dados de Vagas (Python + SQL)
+# Pipeline de Dados de Vagas (Python + SQL)
 
-Projeto de Engenharia de Dados que implementa um pipeline ETL completo para coleta, transformação e armazenamento de dados de vagas de emprego.
+Pipeline ETL de estudo que simula a coleta de vagas de emprego, trata os dados com Pandas e carrega o resultado em um banco SQLite.
 
----
-
-## 📌 Objetivo
-
-Construir um pipeline de dados que simula um fluxo real de engenharia de dados:
-
-- Extração de dados (simulando API)
-- Transformação e limpeza
-- Carga em banco de dados SQL
-- Preparação para análise
+> Este foi o primeiro protótipo do projeto. A versão completa, com scrapers reais, PostgreSQL, testes e CI, está no [hub_vagas](https://github.com/Willian-Cruz/hub_vagas).
 
 ---
 
-## 🧱 Arquitetura do Projeto
-projeto_vagas/
-<br>│
-<br>├── data/
-<br>│ ├── raw/ # Dados brutos
-<br>│ ├── processed/ # Dados tratados
-<br>│
-<br>├── scripts/
-<br>│ ├── extract.py # Extração de dados
-<br>│ ├── transform.py # Limpeza e transformação
-<br>│ ├── load.py # Carga no banco
-<br>│
-<br>├── database/
-<br>│ ├── schema.sql # Estrutura do banco
-<br>│ ├── vagas.db # Banco SQLite
-<br>│
-<br>├── main.py # Orquestração do pipeline
-<br>└── README.md
+## Pipeline
 
+```mermaid
+flowchart LR
+    A[extract.py<br/>API simulada] -->|data/raw_data/vagas.csv| B[transform.py]
+    B -->|data/processed/vagas_tratadas.csv| C[load.py]
+    C --> D[(database/vagas.db<br/>SQLite)]
+```
 
----
+| Etapa | O que faz |
+| --- | --- |
+| Extract | Gera vagas simuladas (incluindo uma duplicada e uma sem localização) e salva o CSV bruto |
+| Transform | Remove duplicados, preenche localização nula com "Não identificado" e cria a coluna `nivel` |
+| Load | Cria a tabela a partir de `database/schema.sql` e carrega as vagas tratadas no SQLite |
 
-## ⚙️ Tecnologias Utilizadas
+## Estrutura
 
-- Python
-- Pandas
-- SQLite
-- SQL
+```text
+Projeto_etl_vagas/
+├── data/
+│   ├── raw_data/vagas.csv          # dados brutos
+│   └── processed/vagas_tratadas.csv # dados tratados
+├── database/
+│   └── schema.sql                  # estrutura da tabela vagas
+├── scripts/
+│   ├── extract.py
+│   ├── transform.py
+│   └── load.py
+├── main.py                         # orquestra as três etapas
+└── requirements.txt
+```
 
----
+O banco `database/vagas.db` é gerado ao rodar o pipeline e não é versionado.
 
-## 🔄 Pipeline ETL
+## Tecnologias
 
-### 1. Extract
-Coleta de dados simulando uma API de vagas e armazenamento em CSV.
+Python, Pandas, SQLite e SQL.
 
-### 2. Transform
-- Remoção de duplicados  
-- Tratamento de valores nulos  
-- Criação de novas colunas (ex: nível da vaga)
+## Como executar
 
-### 3. Load
-Carga dos dados tratados em banco de dados SQLite.
-
----
-
-## ▶️ Como Executar o Projeto
-
-### 1. Clonar repositório
 ```bash
 git clone https://github.com/Willian-Cruz/Projeto_etl_vagas.git
-cd projeto_etl_vagas
-```
-### 2. Criar ambiente virtual (opcional, mas recomendado)
-```
+cd Projeto_etl_vagas
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
 ```
 
-### 3.Instalar dependências
-```pip install pandas```
+Saída esperada:
 
-### 4. Executar pipeline
-```python main.py```
+```text
+Iniciando extração...
+Extração concluída: 4 linhas em .../data/raw_data/vagas.csv
+Iniciando transformação...
+Transformação concluída: 4 -> 3 linhas em .../data/processed/vagas_tratadas.csv
+Iniciando carga...
+Carga concluída: 3 vagas em .../database/vagas.db
+```
